@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+  <style type="text/css">
+  
+    div .button1 {
+        display: inline-block;
+        padding: 0.35em 1.2em;
+        border: 0.1em solid #FFFFFF;
+        margin: 0 0.3em 0.3em 0;
+        border-radius: 0.12em;
+        box-sizing: border-box;
+        text-decoration: none;
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        color: #000000;
+        text-align: center;
+        transition: all 0.2s;
+    }
+
+    .button1:hover {
+        color: #FFFFFF;
+        background-color: #000000;
+    }
+
+    @media all and (max-width:30em) {
+        .button1 {
+            display: block;
+            margin: 0.4em auto;
+        }
+    }
+
+    .tooltip {
+        background-color: black;
+        border: none;
+        border-radius: 5px;
+        padding: 15px;
+        min-width: 400px;
+        text-align: left;
+        color: white;
+    }
+
+    .FigLeg {
+        width: 90%;
+        padding: 1%;
+        margin: auto;
+    }
+
+</style>
+  <head>
+    <meta charset="utf-8">
+    <title>The Wealth & Health of Nations</title>
+    <link rel="stylesheet" type="text/css" href="main.css" />
+    <script type="text/javascript" src="d3/d3.min.js"></script>
+    <script src="https://d3js.org/d3-array.v2.min.js"></script>
+  </head>
+  <body>
+    
+    <h1>The Wealth & Health of Nations</h1>
+
+    <p id="chart_area">The total number of cases city wise in the UK are presented.</p>
+    <!-- <input type="checkbox" name="region" class="region_cb" value="England" checked="checked"> England<br>
+    <input type="checkbox" name="region" class="region_cb" value="Scotland" checked="checked"> Scotland<br>
+    <input type="checkbox" name="region" class="region_cb" value="Wales" checked="checked"> Wales<br>
+    <input type="checkbox" name="region" class="region_cb" value="Northern Ireland" checked="checked"> Northern Ireland<br>
+    
+
+    <input type="range" name="range" class="slider" id="date_slider" value="6/1/2020" min="1/3/2020" max="11/12/2020" step="1" ><br> -->
+
+    <!-- <script src="js/d3.min.js"></script> -->
+    <div id="coronavis"></div>
+
+    <script src="Corona_vis.js"></script>
+
+    <a href="index_(2)_Part2.html">Click here to compare the the death cases, confirmed cases and test cases</a>
+    <!-- <div class="side">
+        <h2>Other indicators:</h2>
+        <p>Presented here are the other factors recorded each day and compiled as above. These factors are the number of deaths, the number of tests and the country wide number of cases.</p>
+    </div>
+
+    
+        <select id="selectdropdown">
+            <option select value=^D>Number of deaths
+            <option value=^T>Number of tests
+            <option value=^C>Number of confirmed cases
+        </select>
+
+    <div id="coronavis2"></div>
+        
+    <script src="Corona_vis2.js"></script> -->
+    <!-- <script src = "main.js"></script> -->
+  
+  </body>
+</html>

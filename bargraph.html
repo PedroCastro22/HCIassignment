@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+    <style>
+
+	 h2 {
+        color: black;
+        text-align: center;
+      }
+
+     body{ width:1060px; margin:20px auto; }
+	 path { stroke: #fff; }
+	 path:hover { opacity:0.9; }
+	 rect:hover { fill:blue; }
+	.axis { font: 10px sans-serif; }
+	.legend tr{ border-bottom:1px solid grey; }
+	.legend tr:first-child{ border-top:1px solid grey; }
+	.axis path, .axis line { fill:none; stroke:#000; 
+						shape-rendering:crispEdges; }
+	.x.axis path { display: none; }
+	
+	.legend{
+			margin-bottom:5px;
+			display:inline-block;
+			border-collapse: collapse;
+			border-spacing: 0px;
+			}
+	.legend td{padding:4px 5px; vertical-align:bottom;}
+	.legendFreq, .legendPerc{ align:right; width:50px; }
+	
+    </style> 
+	
+	<! Main Summary>
+	<div class="box">
+		<h1>Death occurrences by ethnic groups </h1>
+		<p> COVID-19 death occurrences by age, sex and ethnic group, England and Wales, 2 March to 10 April 2020								
+        </p>
+		
+		
+		
+	Select Gender
+	<select onchange="loadData()" id="gender">
+			<option >Male</option>
+			<option >Female</option>
+	</select>
+		
+	</div>
+
+		
+    <script type="text/javascript">  
+     	
+	
+	//Main function to create the page 		
+	function draw(data) {
+		var hG, pC, leg, barColor = 'steelblue';
+	
+		// create google color scale 
+		function colors_google(n) {
+			var colors_g = ["#109618", "#ff9900", "#dc3912",
+			"#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e", "#316395",
+			"#994499", "#22aa99", "#aaaa11", "#6633cc", "#e67300", "#8b0707",
+			"#651067", "#329262", "#5574a6", "#3b3eac","#3366cc"  ];
+			return colors_g[n % colors_g.length];}
+		
+		
+		// compute Total for each carrier.
+		// data.forEach(function(d){d.total=d.arr_flights +d.arr_del15 + 
+        // 										d.arr_cancelled;});	
+        
+        //compute deaths for each ethnicity
+        data.forEach(function(d) {d.total = d.below64 + d.above64;});
+        //console.log(data,"data");
+		//Dynamically set the heading for each year 
+		var selectedYear = document.getElementById('gender')
+								  .selectedOptions[0].text;
+								  
+		barheader = "Death occurrence of UK ethnic group based on the gender group : "
+							+ selectedYear;			
+        var l1 = ("-------------------------------------------------------------------------------");
+		// function to handle histogram.		
+		function handleHistogram(hGData)	{
+			console.log(hGData, "data");
+			d3.select("svg#barChart").remove();
+			d3.select("svg#pieChart").remove();
+			d3.select("svg.legend").remove();
+						
+			// Aircraft code Dictionary			
+			// myAircaftDict={"TZ": "ATA Airlines","FL": "AirTran Airways",
+			// 			"AS": "Alaska Airlines","AA": "American Airlines",
+			// 			"AQ": "Aloha Airlines", "HP": "America West Airlines",
+			// 			"VX": "Virgin America","MQ": "American Eagle Airlines", 
+			// 			"DH": "Atlantic Coast Airlines", 
+			// 			"EV": "Atlantic Southeast Airlines","OH": "Comair Inc.", 
+			// 			"CO": "Continental Airlines", "DL": "Delta Airlines", 
+			// 			"9E": "Pinnacle Airlines","MQ":"Envoy Air", 
+			// 			"EV": "ExpressJet Airlines", "F9": "Frontier Airlines",
+			// 			"HA": "Hawaiian Airlines ",
+			// 			"DH": "Independence Air", "B6": "JetBlue Airways", 
+			// 			"YV": "Mesa Airlines", "NW": "Northwest Airlines",
+			// 			"OO": "SkyWest Airlines", "WN": "Southwest Airlines", 
+			// 			"NK": "Spirit Airlines", "US":  "US Airways", 
+            // 			"UA": "United Airlines"};	
+            
+            myAircaftDict={"W": "White","M": "Mixed",
+						"I": "Indian","B/P": "Bangladeshi/paki",
+						"C": "Chinese", "B": "Black",
+                        "O": "Other"};	
+            
+			var hG={}, hGDim = {t: 150, r: 20, b: 200, l: 10}; 
+			hGDim.w = 1000 - hGDim.l - hGDim.r, 
+			hGDim.h =500 - hGDim.t - hGDim.b;				
+			
+			var hGsvg = d3.select("body")				
+				.append("svg").attr('id', 'barChart')
+				.attr("width", hGDim.w + hGDim.l + hGDim.r)
+				.attr("height", hGDim.h + hGDim.t + hGDim.b).append("g")
+				.attr("transform", "translate(" + hGDim.l + "," +hGDim.t+ ")");
+			console.log(myAircaftDict);	
+            // title for histogram
+            hGsvg.append("text")
+                .attr("dx",500)             
+				.attr("dy", 450/1.5)
+				.attr("text-anchor", "middle")  
+				.style("font-size", "29px")
+				.style('fill', colors_google(2))				
+				.text(l1);
+			hGsvg.append("text")
+				.attr("x", (hGDim.w / 2))             
+				.attr("y", (470/1.5))
+				.attr("text-anchor", "middle")  
+				.style("font-size", "21px")
+				.style('fill', colors_google(5))				
+				.text(barheader);
+
+		    console.log("justbefore x");
+			// create x axis labels (names of carriers)			
+			var x = d3.scale.ordinal().rangeRoundBands([0, hGDim.w], 0.1)
+					.domain(hGData.map(function(d) { 
+                        console.log(myAircaftDict[d[0]],"d");
+                                return myAircaftDict[d[0]]; }));	 // x axis should have white, mised etc
+                                
+			//console.log("x value");						
+			// Add x-axis to the histogram svg	
+			hGsvg.append("g").attr("class", "x axis")
+				.attr("transform", "translate(0," + hGDim.h + ")")
+				.call(d3.svg.axis().scale(x))
+				.selectAll("text")
+				.attr("y", 20)
+				.attr("x", 70)
+				.attr("dy", ".35em")
+				.attr("transform", "rotate(60)")
+				.style("text-anchor", "start");
+            
+                console.log("just before y");	
+			// Create function for y-axis to the svg
+			var y = d3.scale.linear().range([hGDim.h, 0])
+					.domain([0, d3.max(hGData, function(d) { return d[1]/1.75 ; })]);
+			console.log(y);
+			//Create bars for histogram to contain rectangles and Airline names.
+            
+			var bars = hGsvg.selectAll("bar").data(hGData);				
+			//Draw the Rectangles
+			bars.enter()
+				.append("g")
+				.attr("class", "bar")
+				.append("rect")
+				.attr("x", function(d) { return x(myAircaftDict[d[0]]); })
+				.attr("y", function(d) { return y(d[1]); })
+				.attr("width", x.rangeBand() )				
+				.attr("height", function(d) { return hGDim.h -y(d[1])+60; })
+				.attr('fill',barColor)
+			console.log("just after y");				
+			//Create the  labels above the bars.		
+			bars.append("text").text(function(d){
+				
+				return d3.format(".0f")(d[1])+" deaths"})
+				.attr("x", function(d) { return x(myAircaftDict[d[0]])+
+				(x.rangeBand())/2; })
+				.attr("y", function(d) { return y(d[1])-5; })
+				.attr("text-anchor", "middle");		
+			
+			// Event handler to the bars by moving mouse over it 
+			// to update the piechart associated with that bar
+			// calls mouseoverPie() defined below		
+			
+			bars.on('mouseover', mouseoverPie);
+			
+			function mouseoverPie(d) {
+				// d is the bar data (it changes for each bar), 
+				// and it contains 5 observations (given the change to how
+				// data is passed to the bar chart)
+
+                // create labels for data
+				var labels = ["Male death Below 64", " Male death Above 64", "Total Male deaths "];
+
+				// for the pie chart, you want the data to be a list of objects
+				var pieData = [];
+				var selectedAC=myAircaftDict[d[0]];
+				d.slice(2, 5).forEach(function(d, i) {
+					var temp = {};
+					temp['value'] = d;
+					temp['labels'] = labels[i];
+					pieData.push(temp);
+				})
+
+				// call the pieChart() function with the new data
+				pieChart(pieData,selectedAC);
+				}			
+		
+			return hG;
+		}
+		
+		// function to handle pieChart.
+		function pieChart(pD, AcName) {
+			d3.select("svg#pieChart").remove();			
+
+			var pC = {},
+			pieDim = {
+					w: 700,
+					h: 400
+					};
+			pieDim.r = Math.min(pieDim.w, 0.75*pieDim.h) / 2;
+          
+			var rw = pieDim.w / 1.5;
+			var rh = pieDim.h / 2;
+
+			// create svg for pie chart.
+			var piesvg = d3.select("body").append("svg:svg")
+							.attr("id", "pieChart")
+				.data([pD]) //associate our data with the document
+				.attr("width", pieDim.w).attr("height", pieDim.h)
+				.append("svg:g")
+				.attr("transform", "translate(" + rw + "," + rh + ")");
+			var l = ("-------------------------------------------------------------------------------");
+			// add title to the pie chart 
+			var pieTitle=" Number of deaths based on age of " + selectedYear + ": " 
+                        +   AcName;
+                        
+            piesvg.append("text")
+                .attr("dx",250)             
+				.attr("dy", -165)
+				.attr("text-anchor", "middle")  
+				.style("font-size", "29px")
+				.style('fill', colors_google(2))				
+				.text(l);
+			piesvg.append("text")
+				.attr("dx", 0)             
+				.attr("dy", -150)
+				.attr("text-anchor", "middle")  
+				.style("font-size", "18px")
+				.style('fill', colors_google(5))				
+				.text(pieTitle);
+				
+			//move the center of the pie chart from 0, 0 to radius, radius
+
+			// create function to draw the arcs of the pie slices.
+			var arc = d3.svg.arc().outerRadius(pieDim.r - 10).innerRadius(0);
+
+			// create a function to compute the pie slice angles.
+			var pie = d3.layout.pie()
+						.sort(null)
+						.value(function(d, i) {
+						return d.value;
+						});
+
+			// Draw the Pie slices.
+			var arcs = piesvg.selectAll("g.slice") 
+				.data(pie) 
+				.enter() 
+				.append("svg:g")
+				.attr("class", "slice");
+
+				arcs.append("svg:path")
+					.attr("fill", function(d, i) {
+						return colors_google(i);
+					}) //set the color for each slice 
+				.transition()
+				.delay(function(d, i) {
+					return i * 200;
+				})
+				.duration(500)
+				.attr("d", arc); //this creates the actual SVG path 
+				
+				               
+								
+				// Add legend 
+				d3.select("svg.legend").remove();
+				var legend = d3.select("body").append("svg:svg")
+								.attr("class", "legend")          
+								.selectAll("g")
+								.data(pD)
+								.enter().append("g")
+								.attr("transform", function(d, i) {
+									return "translate(0," + i * 20 + ")"; });
+
+				legend.append("rect")
+					.attr("width", 18)
+					.attr("height", 18)
+					.style("fill", function(d, i) {
+						return colors_google(i);
+							}
+						);
+				var formatDecimal = d3.format("0,000")
+				legend.append("text")
+					.attr("x", 24)
+					.attr("y", 9)
+					.attr("dy", ".35em")
+					.text(function(d,i) { 
+						return pD[i].labels + " :"
+							+ formatDecimal(pD[i].value); });		
+		
+		
+		
+				return pC;
+		}		
+		// Extract histogram data 
+		var hGData = data.map(function(d){			
+			
+			// return [d.carrier,d.onTime,d.arr_flights,
+            // 			d.arr_del15, d.arr_cancelled];		
+            return [d.carrier,d.Deaths,d.below64,d.above64];		
+		});
+		
+		//Extract Piechart data 
+		var piChartData = data.map(function(d)
+		{
+			return [d.below64,d.above64,d.Deaths];
+		});
+
+		//Create data for Histogram, PieChart and legend 
+		var hG = handleHistogram(hGData);		
+		
+     
+    };
+	 
+    </script>
+	
+  </head>
+<body>
+  <script type="text/javascript">	
+		
+		// Load the page initially with 2003 year data as default	
+        var defaultdata = 'ed_Male.csv'	
+        
+		d3.csv(defaultdata, draw);
+		// load the data for each year according to user input
+		var loadData = function() {
+		var myYear = document.getElementById('gender').selectedOptions[0].text;
+		var dataFile = 'ed_' + myYear + '.csv'	
+		d3.csv(dataFile, draw);
+		}
+  </script>
+</body>
+</html>

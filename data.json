@@ -1,0 +1,49 @@
+{
+  "name": "data",
+  "children": [
+    {
+      "name": "Low Risk", 
+      "children": [
+        {
+          "name": "Games",     
+          "children": [
+            {"name": "Golf",              "size": 0.2}, 
+            {"name": "Tennis",             "size": 0.2}, 
+            {"name": "Camping",          "size": 0.2}
+          ]
+        },
+        {
+          "name": "Outdoor",
+          "children": [
+            {"name": "Beach",          "size": 0.2},
+            {"name": "Outdoor Exercise",         "size": 0.2},
+            {"name": "Walk in town",          "size": 0.2},
+            {"name": "Dining",         "size": 0.2},
+            {"name": "Hospital",          "size": 0.2},
+            {"name": "Museums",         "size": 0.2}
+          ]
+        } 
+      ]
+    },
+    {
+      "name": "High Risk", 
+      "children": [
+        {"name": "Clubs and Bars",                 "size": 0.5},
+        {"name": "Concerts",               "size": 0.5},
+        {"name": "Funerals",                 "size": 0.5},
+        {"name": "No masks",               "size": 0.5},
+        {"name": "No Social distancing",               "size": 0.7}
+      ]
+    },
+    {
+      "name": "Medium Risk", 
+      "children": [
+        {"name": "Gym Exercise",                "size": 0.5},
+        {"name": "Bowling",            "size": 0.333},
+        {"name": "Parks",                "size": 0.333},
+        {"name": "Public restrooms",                "size": 0.5 },
+        {"name": "Movie Theatre",                "size": 0.5}
+      ]
+    }
+  ]
+}
