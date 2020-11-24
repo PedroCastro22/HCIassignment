@@ -3,11 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Load d3.js -->
-    <script src="https://d3js.org/d3.v4.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+    <style>
+      div.tooltip {	
+        position: absolute;			
+        text-align: center;			
+        width: 140px;					
+        height: 32px;					
+        padding: 2px;				
+        font: 14px sans-serif;		
+        background: rgb(151, 148, 148);	
+        border: 0px;	
+        border-radius: 8px;			
+        pointer-events: none;			
+      }
+    </style>
+    <h1>Map<br></h1>
 
     <!-- Create an element where the map will take place -->
     <svg id="my_dataviz" width="1300" height="700"></svg>
@@ -16,6 +26,10 @@
 </head>
 
 <body>
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v4.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
     <script>
 
         // The svg
@@ -33,13 +47,21 @@
         // Data and color scale
         var data = d3.map();
         var colorScale = d3.scaleThreshold()
-          .domain([1000, 10000, 100000, 500000, 1000000, 3000000])
-          .range(d3.schemeReds[7]);
-        
+          .domain([100, 1000, 10000, 100000, 500000, 1000000, 3000000, 10000000])
+          .range(d3.schemeReds[9]);
+
+        // Tooltip
+        var div = d3.select("body").append("div")	
+            .attr("class", "tooltip")				
+            .style("opacity", 0);
+
         // Load external data and boot
         d3.queue()
           .defer(d3.json, "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson")
-          .defer(d3.csv, "https://raw.githubusercontent.com/PedroCastro22/HCIassignment/main/world_population.csv", function(d) { data.set(d.code, +d.cases); })
+          .defer(d3.csv, "https://raw.githubusercontent.com/PedroCastro22/HCIassignment/main/world_population.csv", function(d) { 
+            d.cases = +d.cases;
+            data.set(d.code, d.cases); 
+            })
           .await(ready);
         
         function ready(error, topo) {
@@ -53,6 +75,13 @@
                 .transition()
                 .duration(200)
                 .style("opacity", 1)
+                div.transition()		
+                .duration(200)		
+                .style("opacity", .9);	
+                div.html(d.id + "<br/>" + "Cases:" + (data.get(d.id) || 0))	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+
             }
 
             let mouseLeave = function(d) {
@@ -64,6 +93,9 @@
                 .transition()
                 .duration(200)
                 .style("opacity", .9)
+                div.transition()		
+                .duration(400)		
+                .style("opacity", 0);	
             }
         
           // Draw the map
