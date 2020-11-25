@@ -1,6 +1,6 @@
 # Corona Quick Visualization
 
-View this notebook in your browser by running a web server in this folder. For
+View this webpage in your browser by running a web server in this folder. For
 example:
 
 ~~~sh
