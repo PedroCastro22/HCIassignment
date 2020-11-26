@@ -177,7 +177,7 @@
 			//Create the  labels above the bars.		
 			bars.append("text").text(function(d){
 				
-				return d3.format(".0f")(d[1])+" deaths"})
+				return d3.format("#,###")(d[1])+" deaths"})
 				.attr("x", function(d) { return x(myAircaftDict[d[0]])+
 				(x.rangeBand())/2; })
 				.attr("y", function(d) { return y(d[1])-5; })
@@ -195,12 +195,12 @@
 				// data is passed to the bar chart)
 
                 // create labels for data
-				var labels = ["Male death Below 64", " Male death Above 64", "Total Male deaths "];
+				var labels = [ "Total deaths ","Death Below 64", " Death Above 64"];
 
 				// for the pie chart, you want the data to be a list of objects
 				var pieData = [];
 				var selectedAC=myAircaftDict[d[0]];
-				d.slice(2, 5).forEach(function(d, i) {
+				d.slice(1, 5).forEach(function(d, i) {
 					var temp = {};
 					temp['value'] = d;
 					temp['labels'] = labels[i];
