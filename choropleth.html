@@ -31,7 +31,7 @@
     <h1>Map<br></h1>
 
     <!-- Create an element where the map will take place -->
-    <svg id="my_dataviz" width="1400" height="800"></svg>
+    <svg id="my_dataviz" width="1700" height="800"></svg>
 
     <title>Choropleth visualization</title>
 </head>
@@ -47,6 +47,8 @@
         var svg = d3.select("svg"),
           width = +svg.attr("width"),
           height = +svg.attr("height");
+
+        console.log(screen.height.toString)
         
         // Map and projection
         var path = d3.geoPath();
@@ -130,7 +132,7 @@
               .on("mouseover", mouseOver )
               .on("mouseleave", mouseLeave );
             }
-            d3.selectAll('svg').attr("transform", "scale(2)");
+            d3.selectAll('svg').attr("transform", "scale(1.1)");
         </script>
 </body>
 </html>
